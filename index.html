@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKR Dashboard — План развития</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0c10;
+  --bg-card: #12151c;
+  --bg-card-hover: #181c26;
+  --bg-input: #1a1e28;
+  --border: #1e2330;
+  --border-active: #2a3040;
+  --text-primary: #e8eaf0;
+  --text-secondary: #8890a0;
+  --text-muted: #505868;
+  --accent-integrator: #f59e0b;
+  --accent-integrator-dim: rgba(245,158,11,0.12);
+  --accent-personal: #10b981;
+  --accent-personal-dim: rgba(16,185,129,0.12);
+  --accent-pm: #6366f1;
+  --accent-pm-dim: rgba(99,102,241,0.12);
+  --accent-danger: #ef4444;
+  --accent-success: #22c55e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 4px;
+  --font-display: 'Manrope', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow-glow-i: 0 0 40px rgba(245,158,11,0.06);
+  --shadow-glow-p: 0 0 40px rgba(16,185,129,0.06);
+  --shadow-glow-pm: 0 0 40px rgba(99,102,241,0.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-display);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245,158,11,0.04), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(99,102,241,0.04), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HEADER ─── */
+.header {
+  padding: 60px 0 40px;
+  text-align: center;
+  position: relative;
+}
+.header__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.header__tag::before, .header__tag::after {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--border);
+}
+.header h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header__subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.header__stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat__value {
+  font-family: var(--font-mono);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.stat__label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ─── OVERALL PROGRESS ─── */
+.overall-progress {
+  margin: 0 0 60px;
+  padding: 28px 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.overall-progress__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.overall-progress__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.overall-progress__percent {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+}
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(90deg, var(--accent-integrator), var(--accent-personal), var(--accent-pm));
+}
+
+/* ─── NAV ─── */
+.nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.nav__btn {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav__btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.nav__btn.active { border-color: var(--accent-integrator); color: var(--accent-integrator); background: var(--accent-integrator-dim); }
+.nav__btn[data-section="personal"].active { border-color: var(--accent-personal); color: var(--accent-personal); background: var(--accent-personal-dim); }
+.nav__btn[data-section="pm"].active { border-color: var(--accent-pm); color: var(--accent-pm); background: var(--accent-pm-dim); }
+.nav__btn[data-section="ritual"].active { border-color: var(--accent-danger); color: var(--accent-danger); background: rgba(239,68,68,0.12); }
+.nav__btn[data-section="hypothesis"].active { border-color: var(--text-secondary); color: var(--text-primary); background: rgba(136,144,160,0.12); }
+.nav__btn[data-section="summary"].active { border-color: var(--text-secondary); color: var(--text-primary); background: rgba(136,144,160,0.12); }
+
+/* ─── SECTIONS ─── */
+.section {
+  margin-bottom: 48px;
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.section.hidden { display: none; }
+
+/* ─── OKR BLOCK ─── */
+.okr-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.okr-block--i { border-top: 3px solid var(--accent-integrator); box-shadow: var(--shadow), var(--shadow-glow-i); }
+.okr-block--personal { border-top: 3px solid var(--accent-personal); box-shadow: var(--shadow), var(--shadow-glow-p); }
+.okr-block--pm { border-top: 3px solid var(--accent-pm); box-shadow: var(--shadow), var(--shadow-glow-pm); }
+
+.okr-block__header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.okr-block__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+.okr-block--i .okr-block__badge { color: var(--accent-integrator); background: var(--accent-integrator-dim); }
+.okr-block--personal .okr-block__badge { color: var(--accent-personal); background: var(--accent-personal-dim); }
+.okr-block--pm .okr-block__badge { color: var(--accent-pm); background: var(--accent-pm-dim); }
+
+.okr-block__objective {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ─── KR CARDS ─── */
+.kr-list { padding: 8px; }
+.kr-card {
+  padding: 24px;
+  margin: 8px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: background 0.2s;
+  cursor: default;
+}
+.kr-card:hover { background: var(--bg-card-hover); }
+
+.kr-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.kr-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+}
+.kr-card__target {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 2px 10px;
+  border-radius: var(--radius-xs);
+}
+.okr-block--i .kr-card__target { color: var(--accent-integrator); background: var(--accent-integrator-dim); }
+.okr-block--personal .kr-card__target { color: var(--accent-personal); background: var(--accent-personal-dim); }
+.okr-block--pm .kr-card__target { color: var(--accent-pm); background: var(--accent-pm-dim); }
+
+.kr-card__meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.kr-card__meta strong { color: var(--text-secondary); font-weight: 600; }
+
+.kr-card__progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.kr-card__progress .progress-bar { flex: 1; height: 6px; }
+.okr-block--i .kr-card__progress .progress-bar__fill { background: var(--accent-integrator); }
+.okr-block--personal .kr-card__progress .progress-bar__fill { background: var(--accent-personal); }
+.okr-block--pm .kr-card__progress .progress-bar__fill { background: var(--accent-pm); }
+
+.kr-card__progress-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+.kr-card__input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.kr-card__input {
+  width: 80px;
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.kr-card__input:focus { border-color: var(--border-active); }
+.kr-card__input-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.kr-card__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  margin-top: 12px;
+}
+.kr-card__source--bitrix { color: #3bc5f6; background: rgba(59,197,246,0.1); }
+.kr-card__source--manual { color: var(--accent-personal); background: var(--accent-personal-dim); }
+
+/* ─── DAILY RITUAL ─── */
+.ritual {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--accent-danger);
+  overflow: hidden;
+}
+.ritual__header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.ritual__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.ritual__subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.ritual__date-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+.ritual__date-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+.ritual__date-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.ritual__date {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.ritual__form { padding: 24px 32px; }
+.ritual__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ritual__row:last-child { border-bottom: none; }
+.ritual__row-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.ritual__row-question {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.ritual__row-input { flex-shrink: 0; }
+
+.toggle-group {
+  display: flex;
+  gap: 4px;
+}
+.toggle-btn {
+  width: 40px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-btn:hover { border-color: var(--border-active); }
+.toggle-btn.active-yes { background: rgba(34,197,94,0.15); border-color: var(--accent-success); color: var(--accent-success); }
+.toggle-btn.active-no { background: rgba(239,68,68,0.15); border-color: var(--accent-danger); color: var(--accent-danger); }
+
+.ritual__num-input {
+  width: 60px;
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-align: center;
+  outline: none;
+}
+.ritual__num-input:focus { border-color: var(--border-active); }
+
+.energy-selector {
+  display: flex;
+  gap: 4px;
+}
+.energy-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.energy-btn:hover { border-color: var(--border-active); }
+.energy-btn.active { background: rgba(245,158,11,0.15); border-color: var(--accent-integrator); color: var(--accent-integrator); }
+.energy-btn.active[data-value="1"],
+.energy-btn.active[data-value="2"] { background: rgba(239,68,68,0.15); border-color: var(--accent-danger); color: var(--accent-danger); }
+
+.ritual__save-row {
+  padding: 16px 32px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.btn--primary {
+  background: var(--accent-success);
+  border-color: var(--accent-success);
+  color: #000;
+}
+.btn--primary:hover { background: #16a34a; }
+
+/* ─── HYPOTHESIS MAP ─── */
+.hypothesis-map {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+}
+.hypothesis-map__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.hypothesis-map__desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.hyp-tree { display: flex; flex-direction: column; gap: 32px; }
+.hyp-goal {
+  border-left: 3px solid var(--border);
+  padding-left: 24px;
+}
+.hyp-goal__title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.hyp-goal__obj {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.hyp-goal--1 { border-color: var(--accent-integrator); }
+.hyp-goal--2 { border-color: var(--accent-personal); }
+.hyp-goal--3 { border-color: var(--accent-pm); }
+
+.hyp-kr {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+}
+.hyp-kr__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hyp-kr__tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+.hyp-goal--1 .hyp-kr__tag { background: var(--accent-integrator-dim); color: var(--accent-integrator); }
+.hyp-goal--2 .hyp-kr__tag { background: var(--accent-personal-dim); color: var(--accent-personal); }
+.hyp-goal--3 .hyp-kr__tag { background: var(--accent-pm-dim); color: var(--accent-pm); }
+
+.hyp-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.hyp-chip {
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+}
+.hyp-chip--subject { border-color: rgba(245,158,11,0.3); }
+.hyp-chip--pain { border-color: rgba(239,68,68,0.3); color: rgba(239,68,68,0.8); }
+.hyp-chip--hypothesis { border-color: rgba(99,102,241,0.3); color: rgba(139,142,241,0.8); }
+.hyp-chip--task { border-color: rgba(34,197,94,0.3); color: rgba(34,197,94,0.8); }
+
+.hyp-chain-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ─── SUMMARY TABLE ─── */
+.summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.summary__title {
+  padding: 24px 32px;
+  font-size: 20px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.summary-table th {
+  padding: 12px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-input);
+}
+.summary-table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.summary-table tr:last-child td { border-bottom: none; }
+.summary-table tr:hover td { background: var(--bg-card-hover); }
+.summary-table .block-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+.block-tag--i { background: var(--accent-integrator-dim); color: var(--accent-integrator); }
+.block-tag--personal { background: var(--accent-personal-dim); color: var(--accent-personal); }
+.block-tag--pm { background: var(--accent-pm-dim); color: var(--accent-pm); }
+.summary-table .value-cell {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.summary-table .freq-cell {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ─── RULE BOX ─── */
+.rule-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  margin-top: 48px;
+}
+.rule-box__title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.rule-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rule-table th, .rule-table td {
+  padding: 10px 16px;
+  font-size: 13px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.rule-table th {
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-input);
+}
+.rule-table td { color: var(--text-muted); }
+
+/* ─── HISTORY PANEL ─── */
+.history {
+  margin-top: 24px;
+  padding: 24px 32px;
+  border-top: 1px solid var(--border);
+}
+.history__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.history__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.history__day {
+  aspect-ratio: 1;
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  position: relative;
+}
+.history__day--filled { background: rgba(34,197,94,0.15); color: var(--accent-success); }
+.history__day--partial { background: rgba(245,158,11,0.15); color: var(--accent-integrator); }
+.history__day--bad { background: rgba(239,68,68,0.15); color: var(--accent-danger); }
+
+/* ─── FOOTER ─── */
+.footer {
+  text-align: center;
+  padding: 60px 0 40px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .header { padding: 40px 0 24px; }
+  .header__stats { gap: 24px; }
+  .okr-block__header, .ritual__header, .ritual__form, .ritual__save-row { padding-left: 20px; padding-right: 20px; }
+  .kr-card { padding: 16px; margin: 4px; }
+  .ritual__row { flex-wrap: wrap; }
+  .hypothesis-map { padding: 20px; }
+  .summary-table th, .summary-table td { padding: 10px 12px; font-size: 12px; }
+  .kr-card__top { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__tag">PAEI + OKR</div>
+    <h1>План развития</h1>
+    <p class="header__subtitle">Модель PAEI и OKR — фокус на интеграции, эффективности и управлении</p>
+    <div class="header__stats">
+      <div class="stat">
+        <div class="stat__value">3</div>
+        <div class="stat__label">Цели</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">11</div>
+        <div class="stat__label">Ключевых результатов</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value" id="overall-percent">0%</div>
+        <div class="stat__label">Общий прогресс</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- OVERALL PROGRESS -->
+  <div class="overall-progress">
+    <div class="overall-progress__header">
+      <span class="overall-progress__title">Общий прогресс</span>
+      <span class="overall-progress__percent" id="overall-percent-bar">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar__fill" id="overall-fill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav__btn active" data-section="integrator">I — Интегратор</button>
+    <button class="nav__btn" data-section="personal">Личная эффективность</button>
+    <button class="nav__btn" data-section="pm">Управление проектами</button>
+    <button class="nav__btn" data-section="ritual">Ежедневный ритуал</button>
+    <button class="nav__btn" data-section="hypothesis">Карта гипотез</button>
+    <button class="nav__btn" data-section="summary">Сводная таблица</button>
+  </nav>
+
+  <!-- SECTION: INTEGRATOR -->
+  <section class="section" id="section-integrator">
+    <div class="okr-block okr-block--i">
+      <div class="okr-block__header">
+        <div class="okr-block__badge">I — Интегратор</div>
+        <div class="okr-block__objective">Построить в командах ИУ и КС такую систему взаимодействия, при которой задачи выполняются в срок, проблемы выявляются и решаются командой самостоятельно, а работа продолжается без сбоев в отсутствие руководителя</div>
+      </div>
+      <div class="kr-list">
+        <!-- KR1 -->
+        <div class="kr-card" data-kr="i-kr1">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR1 — Выполнение задач в срок</div>
+            <div class="kr-card__target">≥80%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % задач, закрытых в установленный срок<br>
+            <strong>Источник:</strong> Bitrix24, отчёт по задачам · <strong>Частота:</strong> еженедельно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="i-kr1">
+            <span class="kr-card__input-label">% задач в срок на этой неделе</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+        <!-- KR2 -->
+        <div class="kr-card" data-kr="i-kr2">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR2 — Автономность тимлидов</div>
+            <div class="kr-card__target">≥90%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % синков с фиксацией решений в Bitrix<br>
+            <strong>Источник:</strong> календарь + Bitrix24 · <strong>Частота:</strong> еженедельно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="i-kr2">
+            <span class="kr-card__input-label">% синков с фиксацией</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+        <!-- KR3 -->
+        <div class="kr-card" data-kr="i-kr3">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR3 — Снижение ручного управления</div>
+            <div class="kr-card__target">≤2/нед</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> кол-во задач, потребовавших личного вмешательства<br>
+            <strong>Что считается:</strong> напоминание, переназначение, повторное объяснение, ручное изменение приоритета<br>
+            <strong>Частота:</strong> ежедневно подсчёт → еженедельно итог
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">—</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="50" placeholder="0" data-kr-input="i-kr3">
+            <span class="kr-card__input-label">вмешательств на этой неделе</span>
+          </div>
+          <div class="kr-card__source kr-card__source--manual">Ручной ввод</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: PERSONAL -->
+  <section class="section hidden" id="section-personal">
+    <div class="okr-block okr-block--personal">
+      <div class="okr-block__header">
+        <div class="okr-block__badge">Личная эффективность</div>
+        <div class="okr-block__objective">Выйти на стабильный режим управления своим временем и энергией, при котором приоритетные задачи выполняются каждый день, а переключения и перегруз не снижают результативность</div>
+      </div>
+      <div class="kr-list">
+        <!-- KR1 -->
+        <div class="kr-card" data-kr="p-kr1">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR1 — Ежедневное планирование</div>
+            <div class="kr-card__target">≥80%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % рабочих дней с планом (3 приоритетные задачи)<br>
+            <strong>Условие:</strong> фиксируется утром до начала работы · <strong>Частота:</strong> ежедневно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__source kr-card__source--manual">Из ежедневного ритуала</div>
+        </div>
+        <!-- KR2 -->
+        <div class="kr-card" data-kr="p-kr2">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR2 — Фокус на приоритетах</div>
+            <div class="kr-card__target">≥70%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % дней с выполненными ≥2 из 3 приоритетов<br>
+            <strong>Условие:</strong> считаются только дни с планом · <strong>Частота:</strong> ежедневно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__source kr-card__source--manual">Из ежедневного ритуала</div>
+        </div>
+        <!-- KR3 -->
+        <div class="kr-card" data-kr="p-kr3">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR3 — Снижение реактивных действий</div>
+            <div class="kr-card__target">≤3/день</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> кол-во реактивных действий в день<br>
+            <strong>Примеры:</strong> бросил приоритет ради входящего, залип в чате 15+ мин, начал чужую задачу<br>
+            <strong>Частота:</strong> ежедневно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">—</span>
+          </div>
+          <div class="kr-card__source kr-card__source--manual">Из ежедневного ритуала</div>
+        </div>
+        <!-- KR4 -->
+        <div class="kr-card" data-kr="p-kr4">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR4 — Энергетическая устойчивость</div>
+            <div class="kr-card__target">≥3.5/5</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> средний уровень энергии за неделю (1–5)<br>
+            <strong>Шкала:</strong> 5 — макс · 4 — хорошо · 3 — устал · 2 — выжат · 1 — сил нет<br>
+            <strong>Правило:</strong> не более 1 дня в неделю с ≤2 · <strong>Частота:</strong> ежедневно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">—</span>
+          </div>
+          <div class="kr-card__source kr-card__source--manual">Из ежедневного ритуала</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: PM -->
+  <section class="section hidden" id="section-pm">
+    <div class="okr-block okr-block--pm">
+      <div class="okr-block__header">
+        <div class="okr-block__badge">Управление проектами</div>
+        <div class="okr-block__objective">Внедрить в проектах ИУ, КС и IT прозрачную систему управления задачами, при которой в любой момент видны статусы, сроки, загрузка и приоритеты</div>
+      </div>
+      <div class="kr-list">
+        <!-- KR1 -->
+        <div class="kr-card" data-kr="pm-kr1">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR1 — Все задачи в системе</div>
+            <div class="kr-card__target">≥95%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % задач с ответственным + сроком + критерием результата<br>
+            <strong>Правило:</strong> задачи из чата, не внесённые в Bitrix — потеря · задачи без срока = не существуют<br>
+            <strong>Частота:</strong> еженедельно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="pm-kr1">
+            <span class="kr-card__input-label">% задач с полной карточкой</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+        <!-- KR2 -->
+        <div class="kr-card" data-kr="pm-kr2">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR2 — Прозрачность статусов</div>
+            <div class="kr-card__target">≥90% / ≥60%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Статусы:</strong> % задач в актуальном статусе → ≥90%<br>
+            <strong>Комментарии:</strong> % остановившихся задач с причиной в 24ч → ≥60%<br>
+            <strong>Частота:</strong> 2 раза в неделю (ср + пт)
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="pm-kr2">
+            <span class="kr-card__input-label">% задач с актуальным статусом</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+        <!-- KR3 -->
+        <div class="kr-card" data-kr="pm-kr3">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR3 — Видимость загрузки</div>
+            <div class="kr-card__target">100%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % сотрудников с видимой загрузкой в Bitrix<br>
+            <strong>Сигналы:</strong> 0 задач = простой · 7+ задач = перегруз · max 5 «в работе»<br>
+            <strong>Частота:</strong> еженедельно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="pm-kr3">
+            <span class="kr-card__input-label">% сотрудников с видимой загрузкой</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+        <!-- KR4 -->
+        <div class="kr-card" data-kr="pm-kr4">
+          <div class="kr-card__top">
+            <div class="kr-card__title">KR4 — IT-ресурс через единый backlog</div>
+            <div class="kr-card__target">100%</div>
+          </div>
+          <div class="kr-card__meta">
+            <strong>Метрика:</strong> % задач IT через единый приоритизированный backlog<br>
+            <strong>Приоритеты:</strong> P1 (срочно) / P2 (план) / P3 (фон) · max 3 «в работе»<br>
+            <strong>Частота:</strong> еженедельно
+          </div>
+          <div class="kr-card__progress">
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 0%"></div></div>
+            <span class="kr-card__progress-value">0%</span>
+          </div>
+          <div class="kr-card__input-row">
+            <input type="number" class="kr-card__input" min="0" max="100" placeholder="0" data-kr-input="pm-kr4">
+            <span class="kr-card__input-label">% задач IT через backlog</span>
+          </div>
+          <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: DAILY RITUAL -->
+  <section class="section hidden" id="section-ritual">
+    <div class="ritual">
+      <div class="ritual__header">
+        <div class="ritual__title">Ежедневный ритуал</div>
+        <div class="ritual__subtitle">2 минуты вечером — 5 вопросов</div>
+      </div>
+      <div class="ritual__date-nav">
+        <button class="ritual__date-btn" id="prev-day">&larr;</button>
+        <span class="ritual__date" id="ritual-date"></span>
+        <button class="ritual__date-btn" id="next-day">&rarr;</button>
+      </div>
+      <div class="ritual__form">
+        <!-- Q1: Plan -->
+        <div class="ritual__row">
+          <span class="ritual__row-num">1</span>
+          <span class="ritual__row-question">План был?</span>
+          <div class="ritual__row-input">
+            <div class="toggle-group" data-ritual="plan">
+              <button class="toggle-btn" data-value="yes">&#10003;</button>
+              <button class="toggle-btn" data-value="no">&#10007;</button>
+            </div>
+          </div>
+        </div>
+        <!-- Q2: Priorities -->
+        <div class="ritual__row">
+          <span class="ritual__row-num">2</span>
+          <span class="ritual__row-question">Сделал 2/3 приоритетов?</span>
+          <div class="ritual__row-input">
+            <div class="toggle-group" data-ritual="priorities">
+              <button class="toggle-btn" data-value="yes">&#10003;</button>
+              <button class="toggle-btn" data-value="no">&#10007;</button>
+            </div>
+          </div>
+        </div>
+        <!-- Q3: Reactive -->
+        <div class="ritual__row">
+          <span class="ritual__row-num">3</span>
+          <span class="ritual__row-question">Сколько раз дёрнули / переключился?</span>
+          <div class="ritual__row-input">
+            <input type="number" class="ritual__num-input" min="0" max="99" placeholder="0" data-ritual="reactive">
+          </div>
+        </div>
+        <!-- Q4: Energy -->
+        <div class="ritual__row">
+          <span class="ritual__row-num">4</span>
+          <span class="ritual__row-question">Энергия?</span>
+          <div class="ritual__row-input">
+            <div class="energy-selector" data-ritual="energy">
+              <button class="energy-btn" data-value="1">1</button>
+              <button class="energy-btn" data-value="2">2</button>
+              <button class="energy-btn" data-value="3">3</button>
+              <button class="energy-btn" data-value="4">4</button>
+              <button class="energy-btn" data-value="5">5</button>
+            </div>
+          </div>
+        </div>
+        <!-- Q5: Interventions -->
+        <div class="ritual__row">
+          <span class="ritual__row-num">5</span>
+          <span class="ritual__row-question">Сколько раз вмешался в задачи команды?</span>
+          <div class="ritual__row-input">
+            <input type="number" class="ritual__num-input" min="0" max="99" placeholder="0" data-ritual="interventions">
+          </div>
+        </div>
+      </div>
+      <div class="ritual__save-row">
+        <button class="btn" id="ritual-clear">Очистить</button>
+        <button class="btn btn--primary" id="ritual-save">Сохранить день</button>
+      </div>
+      <!-- History -->
+      <div class="history">
+        <div class="history__title">Последние 28 дней</div>
+        <div class="history__grid" id="history-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: HYPOTHESIS MAP -->
+  <section class="section hidden" id="section-hypothesis">
+    <div class="hypothesis-map">
+      <div class="hypothesis-map__title">Карта гипотез</div>
+      <div class="hypothesis-map__desc">3 цели &rarr; KR &rarr; субъекты &rarr; боли &rarr; гипотезы &rarr; задачи</div>
+      <div class="hyp-tree">
+
+        <!-- Goal 1 -->
+        <div class="hyp-goal hyp-goal--1">
+          <div class="hyp-goal__title">Цель 1: Система взаимодействия в командах</div>
+          <div class="hyp-goal__obj">Команды ИУ и КС работают автономно, задачи в срок</div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR1</span> Выполнение задач в срок ≥80%</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--subject">Исполнители ИУ</span>
+              <span class="hyp-chip hyp-chip--subject">Тимлид КС</span>
+            </div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Нет чётких дедлайнов</span>
+              <span class="hyp-chip hyp-chip--pain">Задачи теряются в чатах</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если все задачи с дедлайном в Bitrix → срок +20%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Настроить обязательные поля в Bitrix</span>
+              <span class="hyp-chip hyp-chip--task">Провести обучение команды</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR2</span> Автономность тимлидов ≥90%</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--subject">Тимлиды</span>
+            </div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Решения не фиксируются</span>
+              <span class="hyp-chip hyp-chip--pain">Ждут руководителя</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если ввести шаблон синка → фиксация +40%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Создать шаблон протокола синка</span>
+              <span class="hyp-chip hyp-chip--task">Делегировать ведение синков тимлидам</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR3</span> Ручное управление ≤2/нед</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--subject">Руководитель (ты)</span>
+            </div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Постоянные напоминания</span>
+              <span class="hyp-chip hyp-chip--pain">Ручное переназначение</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если авто-напоминания в Bitrix → вмешательства −50%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Настроить авто-напоминания за 1 день до дедлайна</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 2 -->
+        <div class="hyp-goal hyp-goal--2">
+          <div class="hyp-goal__title">Цель 2: Стабильный режим управления временем и энергией</div>
+          <div class="hyp-goal__obj">Приоритеты выполняются, перегруз не снижает результат</div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR1</span> Ежедневное планирование ≥80%</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain"><span class="hyp-chip hyp-chip--subject">Ты</span></div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">День начинается без плана</span>
+              <span class="hyp-chip hyp-chip--pain">Реактивный режим с утра</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если 5 мин утром на 3 приоритета → фокус +30%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Утренний ритуал: 3 задачи до проверки чатов</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR2-3</span> Фокус + Снижение реактивности</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain"><span class="hyp-chip hyp-chip--subject">Ты</span><span class="hyp-chip hyp-chip--subject">Команда</span></div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Постоянные переключения</span>
+              <span class="hyp-chip hyp-chip--pain">Залипание в чатах</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если 2 блока «тишины» по 1.5ч → реактивность −40%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Заблокировать уведомления 9:00-10:30 и 14:00-15:30</span>
+              <span class="hyp-chip hyp-chip--task">Объяснить команде правило «тишины»</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR4</span> Энергия ≥3.5/5</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain"><span class="hyp-chip hyp-chip--subject">Ты</span></div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Выгорание к концу недели</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если сон ≥7ч + спорт 3р/нед → энергия стабильна</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Будильник на отбой 23:00</span>
+              <span class="hyp-chip hyp-chip--task">3 тренировки в календарь</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 3 -->
+        <div class="hyp-goal hyp-goal--3">
+          <div class="hyp-goal__title">Цель 3: Прозрачная система управления задачами</div>
+          <div class="hyp-goal__obj">В проектах ИУ, КС и IT видны статусы, сроки, загрузка</div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR1</span> Все задачи в системе ≥95%</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--subject">Все сотрудники</span>
+              <span class="hyp-chip hyp-chip--subject">Тимлиды</span>
+            </div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Задачи в чатах и на словах</span>
+              <span class="hyp-chip hyp-chip--pain">Нет сроков и ответственных</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если правило «нет в Bitrix = не существует» → охват 95%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Объявить правило на планёрке</span>
+              <span class="hyp-chip hyp-chip--task">Еженедельный аудит «потерянных» задач</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR2</span> Прозрачность статусов ≥90%</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain"><span class="hyp-chip hyp-chip--subject">Исполнители</span></div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Статусы не обновляются</span>
+              <span class="hyp-chip hyp-chip--pain">Причины остановки не пишут</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если напоминание при >2 дней без обновления → актуальность +30%</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Настроить бота: напоминание при неактивности >2 дней</span>
+            </div>
+          </div>
+
+          <div class="hyp-kr">
+            <div class="hyp-kr__title"><span class="hyp-kr__tag">KR3-4</span> Загрузка + IT backlog</div>
+            <div class="hyp-chain-label">Субъекты</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--subject">Все сотрудники</span>
+              <span class="hyp-chip hyp-chip--subject">IT-специалисты</span>
+            </div>
+            <div class="hyp-chain-label">Боли</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--pain">Непонятно кто чем занят</span>
+              <span class="hyp-chip hyp-chip--pain">IT-задачи идут мимо backlog</span>
+            </div>
+            <div class="hyp-chain-label">Гипотезы</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--hypothesis">Если дашборд загрузки + тег IT обязательный → полная видимость</span>
+            </div>
+            <div class="hyp-chain-label">Задачи</div>
+            <div class="hyp-chain">
+              <span class="hyp-chip hyp-chip--task">Создать дашборд загрузки в Bitrix</span>
+              <span class="hyp-chip hyp-chip--task">Сделать тег IT обязательным для IT-задач</span>
+              <span class="hyp-chip hyp-chip--task">Ввести лимит WIP: max 3 задачи в работе</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: SUMMARY -->
+  <section class="section hidden" id="section-summary">
+    <div class="summary">
+      <div class="summary__title">Сводная таблица</div>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Блок</th>
+            <th>KR</th>
+            <th>Целевое</th>
+            <th>Текущее</th>
+            <th>Частота</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR1 — Задачи в срок</td><td class="value-cell">≥80%</td><td class="value-cell" data-summary="i-kr1">—</td><td class="freq-cell">еженедельно</td></tr>
+          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR2 — Синки с фиксацией</td><td class="value-cell">≥90%</td><td class="value-cell" data-summary="i-kr2">—</td><td class="freq-cell">еженедельно</td></tr>
+          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR3 — Вмешательства</td><td class="value-cell">≤2/нед</td><td class="value-cell" data-summary="i-kr3">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
+          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR1 — Дни с планом</td><td class="value-cell">≥80%</td><td class="value-cell" data-summary="p-kr1">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
+          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR2 — Выполнение приоритетов</td><td class="value-cell">≥70%</td><td class="value-cell" data-summary="p-kr2">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
+          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR3 — Реактивные действия</td><td class="value-cell">≤3/день</td><td class="value-cell" data-summary="p-kr3">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
+          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR4 — Энергия</td><td class="value-cell">≥3.5/5</td><td class="value-cell" data-summary="p-kr4">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
+          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR1 — Полная карточка</td><td class="value-cell">≥95%</td><td class="value-cell" data-summary="pm-kr1">—</td><td class="freq-cell">еженедельно</td></tr>
+          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR2 — Статусы / комментарии</td><td class="value-cell">≥90% / ≥60%</td><td class="value-cell" data-summary="pm-kr2">—</td><td class="freq-cell">2 р./нед.</td></tr>
+          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR3 — Видимость загрузки</td><td class="value-cell">100%</td><td class="value-cell" data-summary="pm-kr3">—</td><td class="freq-cell">еженедельно</td></tr>
+          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR4 — IT backlog</td><td class="value-cell">100%</td><td class="value-cell" data-summary="pm-kr4">—</td><td class="freq-cell">еженедельно</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Rule box -->
+    <div class="rule-box">
+      <div class="rule-box__title">Правило: чат vs задача</div>
+      <table class="rule-table">
+        <thead><tr><th>Чат</th><th>Задача (Bitrix)</th></tr></thead>
+        <tbody>
+          <tr><td>Вопрос — ответ</td><td>Нужно сделать + срок</td></tr>
+          <tr><td>Обсуждение вариантов</td><td>Результат обсуждения → действие</td></tr>
+          <tr><td>Информирование</td><td>Проверка и контроль</td></tr>
+          <tr><td>Мелочь на 5 минут</td><td>Работа больше 1 часа</td></tr>
+          <tr><td>«Что думаете?»</td><td>«Сделай к пятнице»</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    PAEI + OKR Dashboard &middot; Bitrix24 integration coming soon
+  </footer>
+
+</div>
+
+<script>
+// ─── DATA LAYER ───
+const STORAGE_KEY = 'okr-dashboard';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let appData = loadData();
+if (!appData.kr) appData.kr = {};
+if (!appData.ritual) appData.ritual = {};
+
+// ─── NAV ───
+const navBtns = document.querySelectorAll('.nav__btn');
+const sections = document.querySelectorAll('.section');
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.section;
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sections.forEach(s => {
+      s.classList.toggle('hidden', s.id !== `section-${target}`);
+    });
+  });
+});
+
+// ─── KR INPUTS ───
+document.querySelectorAll('[data-kr-input]').forEach(input => {
+  const kr = input.dataset.krInput;
+  if (appData.kr[kr] !== undefined) input.value = appData.kr[kr];
+
+  input.addEventListener('input', () => {
+    appData.kr[kr] = input.value === '' ? null : Number(input.value);
+    saveData(appData);
+    updateProgress();
+    updateSummary();
+  });
+});
+
+function updateProgress() {
+  // Update individual KR progress bars
+  document.querySelectorAll('.kr-card').forEach(card => {
+    const kr = card.dataset.kr;
+    const val = appData.kr[kr];
+    const fill = card.querySelector('.progress-bar__fill');
+    const label = card.querySelector('.kr-card__progress-value');
+    if (val === null || val === undefined) return;
+
+    // Special handling for "less is better" KRs
+    if (kr === 'i-kr3') {
+      const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
+      fill.style.width = pct + '%';
+      label.textContent = val + '/нед';
+    } else if (kr === 'p-kr3') {
+      const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
+      fill.style.width = pct + '%';
+      label.textContent = val + '/день';
+    } else {
+      fill.style.width = Math.min(val, 100) + '%';
+      label.textContent = val + '%';
+    }
+  });
+
+  // Overall progress
+  const krKeys = ['i-kr1','i-kr2','i-kr3','pm-kr1','pm-kr2','pm-kr3','pm-kr4'];
+  const targets = { 'i-kr1': 80, 'i-kr2': 90, 'i-kr3': 2, 'pm-kr1': 95, 'pm-kr2': 90, 'pm-kr3': 100, 'pm-kr4': 100 };
+  let totalProgress = 0;
+  let count = 0;
+
+  krKeys.forEach(k => {
+    const val = appData.kr[k];
+    if (val === null || val === undefined) return;
+    count++;
+    if (k === 'i-kr3') {
+      totalProgress += Math.min(100, Math.max(0, val <= targets[k] ? 100 : ((10 - val) / 10) * 100));
+    } else {
+      totalProgress += Math.min(100, (val / targets[k]) * 100);
+    }
+  });
+
+  // Add ritual-derived KRs
+  const ritualStats = computeRitualStats();
+  if (ritualStats.totalDays > 0) {
+    totalProgress += Math.min(100, (ritualStats.planPercent / 80) * 100); count++;
+    totalProgress += Math.min(100, (ritualStats.priorityPercent / 70) * 100); count++;
+    totalProgress += Math.min(100, ritualStats.avgReactive <= 3 ? 100 : ((10 - ritualStats.avgReactive) / 10) * 100); count++;
+    totalProgress += Math.min(100, (ritualStats.avgEnergy / 3.5) * 100); count++;
+  }
+
+  const overall = count > 0 ? Math.round(totalProgress / Math.max(count, 11)) : 0;
+  document.getElementById('overall-percent').textContent = overall + '%';
+  document.getElementById('overall-percent-bar').textContent = overall + '%';
+  document.getElementById('overall-fill').style.width = overall + '%';
+}
+
+function computeRitualStats() {
+  const days = Object.values(appData.ritual || {});
+  if (days.length === 0) return { totalDays: 0, planPercent: 0, priorityPercent: 0, avgReactive: 0, avgEnergy: 0 };
+  let planDays = 0, priorityDays = 0, totalReactive = 0, totalEnergy = 0, energyDays = 0;
+  days.forEach(d => {
+    if (d.plan === 'yes') planDays++;
+    if (d.priorities === 'yes') priorityDays++;
+    if (d.reactive !== undefined && d.reactive !== null) totalReactive += d.reactive;
+    if (d.energy) { totalEnergy += d.energy; energyDays++; }
+  });
+  return {
+    totalDays: days.length,
+    planPercent: Math.round((planDays / days.length) * 100),
+    priorityPercent: Math.round((priorityDays / days.length) * 100),
+    avgReactive: days.length > 0 ? +(totalReactive / days.length).toFixed(1) : 0,
+    avgEnergy: energyDays > 0 ? +(totalEnergy / energyDays).toFixed(1) : 0
+  };
+}
+
+function updateSummary() {
+  const map = {
+    'i-kr1': v => v + '%',
+    'i-kr2': v => v + '%',
+    'i-kr3': v => v + '/нед',
+    'pm-kr1': v => v + '%',
+    'pm-kr2': v => v + '%',
+    'pm-kr3': v => v + '%',
+    'pm-kr4': v => v + '%'
+  };
+  Object.keys(map).forEach(k => {
+    const el = document.querySelector(`[data-summary="${k}"]`);
+    if (el) el.textContent = appData.kr[k] !== null && appData.kr[k] !== undefined ? map[k](appData.kr[k]) : '—';
+  });
+
+  const stats = computeRitualStats();
+  const ritualMap = {
+    'p-kr1': stats.totalDays > 0 ? stats.planPercent + '%' : '—',
+    'p-kr2': stats.totalDays > 0 ? stats.priorityPercent + '%' : '—',
+    'p-kr3': stats.totalDays > 0 ? stats.avgReactive + '/день' : '—',
+    'p-kr4': stats.totalDays > 0 ? stats.avgEnergy + '/5' : '—'
+  };
+  Object.keys(ritualMap).forEach(k => {
+    const el = document.querySelector(`[data-summary="${k}"]`);
+    if (el) el.textContent = ritualMap[k];
+  });
+
+  // Update personal KR progress bars
+  if (stats.totalDays > 0) {
+    updatePersonalKR('p-kr1', stats.planPercent, '%');
+    updatePersonalKR('p-kr2', stats.priorityPercent, '%');
+    updatePersonalKR('p-kr3', stats.avgReactive, '/день', true);
+    updatePersonalKR('p-kr4', stats.avgEnergy, '/5', false, 5);
+  }
+}
+
+function updatePersonalKR(kr, val, suffix, inversed, max) {
+  const card = document.querySelector(`[data-kr="${kr}"]`);
+  if (!card) return;
+  const fill = card.querySelector('.progress-bar__fill');
+  const label = card.querySelector('.kr-card__progress-value');
+  if (inversed) {
+    const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
+    fill.style.width = pct + '%';
+  } else if (max) {
+    fill.style.width = Math.min(100, (val / max) * 100) + '%';
+  } else {
+    fill.style.width = Math.min(val, 100) + '%';
+  }
+  label.textContent = val + suffix;
+}
+
+// ─── DAILY RITUAL ───
+let currentDate = new Date();
+currentDate.setHours(0, 0, 0, 0);
+
+function formatDate(d) {
+  const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function dateKey(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+function renderRitualDate() {
+  document.getElementById('ritual-date').textContent = formatDate(currentDate);
+  const key = dateKey(currentDate);
+  const day = appData.ritual[key] || {};
+
+  // Reset all inputs
+  document.querySelectorAll('.toggle-group .toggle-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  document.querySelectorAll('.energy-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ritual__num-input').forEach(i => i.value = '');
+
+  // Populate from saved data
+  if (day.plan) {
+    const grp = document.querySelector('[data-ritual="plan"]');
+    const btn = grp.querySelector(`[data-value="${day.plan}"]`);
+    if (btn) btn.classList.add(day.plan === 'yes' ? 'active-yes' : 'active-no');
+  }
+  if (day.priorities) {
+    const grp = document.querySelector('[data-ritual="priorities"]');
+    const btn = grp.querySelector(`[data-value="${day.priorities}"]`);
+    if (btn) btn.classList.add(day.priorities === 'yes' ? 'active-yes' : 'active-no');
+  }
+  if (day.reactive !== undefined && day.reactive !== null) {
+    document.querySelector('[data-ritual="reactive"]').value = day.reactive;
+  }
+  if (day.energy) {
+    const btn = document.querySelector(`.energy-btn[data-value="${day.energy}"]`);
+    if (btn) btn.classList.add('active');
+  }
+  if (day.interventions !== undefined && day.interventions !== null) {
+    document.querySelector('[data-ritual="interventions"]').value = day.interventions;
+  }
+}
+
+document.getElementById('prev-day').addEventListener('click', () => {
+  currentDate.setDate(currentDate.getDate() - 1);
+  renderRitualDate();
+});
+document.getElementById('next-day').addEventListener('click', () => {
+  currentDate.setDate(currentDate.getDate() + 1);
+  renderRitualDate();
+});
+
+// Toggle buttons
+document.querySelectorAll('.toggle-group').forEach(grp => {
+  grp.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      grp.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+      btn.classList.add(btn.dataset.value === 'yes' ? 'active-yes' : 'active-no');
+    });
+  });
+});
+
+// Energy buttons
+document.querySelectorAll('.energy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.energy-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Save ritual
+document.getElementById('ritual-save').addEventListener('click', () => {
+  const key = dateKey(currentDate);
+  const planBtn = document.querySelector('[data-ritual="plan"] .active-yes, [data-ritual="plan"] .active-no');
+  const prioBtn = document.querySelector('[data-ritual="priorities"] .active-yes, [data-ritual="priorities"] .active-no');
+  const energyBtn = document.querySelector('.energy-btn.active');
+
+  appData.ritual[key] = {
+    plan: planBtn ? planBtn.dataset.value : null,
+    priorities: prioBtn ? prioBtn.dataset.value : null,
+    reactive: Number(document.querySelector('[data-ritual="reactive"]').value) || 0,
+    energy: energyBtn ? Number(energyBtn.dataset.value) : null,
+    interventions: Number(document.querySelector('[data-ritual="interventions"]').value) || 0
+  };
+  saveData(appData);
+  renderHistory();
+  updateProgress();
+  updateSummary();
+
+  // Brief flash feedback
+  const btn = document.getElementById('ritual-save');
+  btn.textContent = 'Сохранено!';
+  setTimeout(() => btn.textContent = 'Сохранить день', 1500);
+});
+
+document.getElementById('ritual-clear').addEventListener('click', () => {
+  const key = dateKey(currentDate);
+  delete appData.ritual[key];
+  saveData(appData);
+  renderRitualDate();
+  renderHistory();
+  updateProgress();
+  updateSummary();
+});
+
+// History grid
+function renderHistory() {
+  const grid = document.getElementById('history-grid');
+  grid.innerHTML = '';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = dateKey(d);
+    const day = appData.ritual[key];
+    const el = document.createElement('div');
+    el.className = 'history__day';
+    el.textContent = d.getDate();
+
+    if (day) {
+      const good = (day.plan === 'yes' ? 1 : 0) + (day.priorities === 'yes' ? 1 : 0) + (day.energy >= 3 ? 1 : 0);
+      if (good >= 3) el.classList.add('history__day--filled');
+      else if (good >= 1) el.classList.add('history__day--partial');
+      else el.classList.add('history__day--bad');
+    }
+    grid.appendChild(el);
+  }
+}
+
+// ─── INIT ───
+renderRitualDate();
+renderHistory();
+updateProgress();
+updateSummary();
+</script>
+
+</body>
+</html>
