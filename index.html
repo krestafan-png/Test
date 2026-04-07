@@ -718,6 +718,130 @@ body::before {
 .history__day--partial { background: rgba(245,158,11,0.15); color: var(--accent-integrator); }
 .history__day--bad { background: rgba(239,68,68,0.15); color: var(--accent-danger); }
 
+/* ─── WEEK SELECTOR ─── */
+.week-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+}
+.week-bar__label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+}
+.week-bar__value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.week-bar__btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.week-bar__btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.week-bar__spacer { flex: 1; }
+.week-bar__status {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.week-bar__status--saved { color: var(--accent-success); background: rgba(22,163,74,0.1); }
+.week-bar__status--draft { color: var(--accent-integrator); background: var(--accent-integrator-dim); }
+
+.submit-week-row {
+  padding: 16px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
+}
+.submit-week-row__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+/* ─── WEEKLY LOG TABLE ─── */
+.weekly-log {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+.weekly-log__title {
+  padding: 24px 32px 16px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.weekly-log__subtitle {
+  padding: 0 32px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.wlog-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+.wlog-table th {
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+  background: var(--bg-input);
+  position: sticky;
+  top: 0;
+}
+.wlog-table th:first-child { text-align: left; }
+.wlog-table td {
+  padding: 10px 14px;
+  font-size: 13px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+.wlog-table td:first-child {
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.wlog-table tr:last-child td { border-bottom: none; }
+.wlog-table tr:hover td { background: var(--bg-card-hover); }
+.wlog-table .wlog-avg { font-weight: 700; color: var(--text-primary); background: var(--bg-input); }
+.wlog-cell--good { color: var(--accent-success); }
+.wlog-cell--warn { color: var(--accent-integrator); }
+.wlog-cell--bad { color: var(--accent-danger); }
+.wlog-cell--na { color: var(--text-muted); font-style: italic; }
+.trend-up::after { content: ' ↑'; color: var(--accent-success); }
+.trend-down::after { content: ' ↓'; color: var(--accent-danger); }
+.trend-flat::after { content: ' →'; color: var(--text-muted); }
+
 /* ─── FOOTER ─── */
 .footer {
   text-align: center;
@@ -794,6 +918,14 @@ body::before {
         <div class="okr-block__badge">I — Интегратор</div>
         <div class="okr-block__objective">Построить в командах ИУ и КС такую систему взаимодействия, при которой задачи выполняются в срок, проблемы выявляются и решаются командой самостоятельно, а работа продолжается без сбоев в отсутствие руководителя</div>
       </div>
+      <div class="week-bar" id="week-bar-i">
+        <button class="week-bar__btn" data-week-prev="i">&larr;</button>
+        <span class="week-bar__label">Неделя:</span>
+        <span class="week-bar__value" id="week-label-i"></span>
+        <button class="week-bar__btn" data-week-next="i">&rarr;</button>
+        <span class="week-bar__spacer"></span>
+        <span class="week-bar__status" id="week-status-i"></span>
+      </div>
       <div class="kr-list">
         <!-- KR1 -->
         <div class="kr-card" data-kr="i-kr1">
@@ -856,6 +988,10 @@ body::before {
           </div>
           <div class="kr-card__source kr-card__source--manual">Ручной ввод</div>
         </div>
+      </div>
+      <div class="submit-week-row">
+        <span class="submit-week-row__hint">Заполни все KR и отправь — данные запишутся в сводную таблицу</span>
+        <button class="btn btn--primary" data-submit-week="i">Отправить неделю</button>
       </div>
     </div>
   </section>
@@ -945,6 +1081,14 @@ body::before {
         <div class="okr-block__badge">Управление проектами</div>
         <div class="okr-block__objective">Внедрить в проектах ИУ, КС и IT прозрачную систему управления задачами, при которой в любой момент видны статусы, сроки, загрузка и приоритеты</div>
       </div>
+      <div class="week-bar" id="week-bar-pm">
+        <button class="week-bar__btn" data-week-prev="pm">&larr;</button>
+        <span class="week-bar__label">Неделя:</span>
+        <span class="week-bar__value" id="week-label-pm"></span>
+        <button class="week-bar__btn" data-week-next="pm">&rarr;</button>
+        <span class="week-bar__spacer"></span>
+        <span class="week-bar__status" id="week-status-pm"></span>
+      </div>
       <div class="kr-list">
         <!-- KR1 -->
         <div class="kr-card" data-kr="pm-kr1">
@@ -1030,6 +1174,10 @@ body::before {
           </div>
           <div class="kr-card__source kr-card__source--bitrix">Bitrix24 (позже авто)</div>
         </div>
+      </div>
+      <div class="submit-week-row">
+        <span class="submit-week-row__hint">Заполни все KR и отправь — данные запишутся в сводную таблицу</span>
+        <button class="btn btn--primary" data-submit-week="pm">Отправить неделю</button>
       </div>
     </div>
   </section>
@@ -1333,32 +1481,25 @@ body::before {
 
   <!-- SECTION: SUMMARY -->
   <section class="section hidden" id="section-summary">
-    <div class="summary">
-      <div class="summary__title">Сводная таблица</div>
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th>Блок</th>
-            <th>KR</th>
-            <th>Целевое</th>
-            <th>Текущее</th>
-            <th>Частота</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR1 — Задачи в срок</td><td class="value-cell">≥80%</td><td class="value-cell" data-summary="i-kr1">—</td><td class="freq-cell">еженедельно</td></tr>
-          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR2 — Синки с фиксацией</td><td class="value-cell">≥90%</td><td class="value-cell" data-summary="i-kr2">—</td><td class="freq-cell">еженедельно</td></tr>
-          <tr><td><span class="block-tag block-tag--i">I</span></td><td>KR3 — Вмешательства</td><td class="value-cell">≤2/нед</td><td class="value-cell" data-summary="i-kr3">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
-          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR1 — Дни с планом</td><td class="value-cell">≥80%</td><td class="value-cell" data-summary="p-kr1">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
-          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR2 — Выполнение приоритетов</td><td class="value-cell">≥70%</td><td class="value-cell" data-summary="p-kr2">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
-          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR3 — Реактивные действия</td><td class="value-cell">≤3/день</td><td class="value-cell" data-summary="p-kr3">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
-          <tr><td><span class="block-tag block-tag--personal">Личная</span></td><td>KR4 — Энергия</td><td class="value-cell">≥3.5/5</td><td class="value-cell" data-summary="p-kr4">—</td><td class="freq-cell">ежедн. → еженед.</td></tr>
-          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR1 — Полная карточка</td><td class="value-cell">≥95%</td><td class="value-cell" data-summary="pm-kr1">—</td><td class="freq-cell">еженедельно</td></tr>
-          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR2 — Статусы / комментарии</td><td class="value-cell">≥90% / ≥60%</td><td class="value-cell" data-summary="pm-kr2">—</td><td class="freq-cell">2 р./нед.</td></tr>
-          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR3 — Видимость загрузки</td><td class="value-cell">100%</td><td class="value-cell" data-summary="pm-kr3">—</td><td class="freq-cell">еженедельно</td></tr>
-          <tr><td><span class="block-tag block-tag--pm">PM</span></td><td>KR4 — IT backlog</td><td class="value-cell">100%</td><td class="value-cell" data-summary="pm-kr4">—</td><td class="freq-cell">еженедельно</td></tr>
-        </tbody>
-      </table>
+    <!-- Weekly log: I (Integrator) -->
+    <div class="weekly-log">
+      <div class="weekly-log__title">I (Интегратор) — понедельный журнал</div>
+      <div class="weekly-log__subtitle">Целевые: KR1 ≥80% · KR2 ≥90% · KR3 ≤2/нед</div>
+      <div id="wlog-i"></div>
+    </div>
+
+    <!-- Weekly log: Personal -->
+    <div class="weekly-log">
+      <div class="weekly-log__title">Личная эффективность — понедельный журнал</div>
+      <div class="weekly-log__subtitle">Целевые: KR1 ≥80% · KR2 ≥70% · KR3 ≤3/день · KR4 ≥3.5/5 · Авто из ежедневного ритуала</div>
+      <div id="wlog-p"></div>
+    </div>
+
+    <!-- Weekly log: PM -->
+    <div class="weekly-log">
+      <div class="weekly-log__title">Управление проектами — понедельный журнал</div>
+      <div class="weekly-log__subtitle">Целевые: KR1 ≥95% · KR2 ≥90% · KR3 100% · KR4 100%</div>
+      <div id="wlog-pm"></div>
     </div>
 
     <!-- Rule box -->
@@ -1385,172 +1526,286 @@ body::before {
 
 <script>
 // ─── DATA LAYER ───
-const STORAGE_KEY = 'okr-dashboard';
+const STORAGE_KEY = 'okr-dashboard-v2';
 
 function loadData() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (d) return d;
+    // Migrate from v1
+    const v1 = JSON.parse(localStorage.getItem('okr-dashboard'));
+    if (v1) { const m = { kr: v1.kr || {}, ritual: v1.ritual || {}, weeks: {} }; saveData(m); return m; }
+    return {};
+  } catch { return {}; }
 }
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
 let appData = loadData();
 if (!appData.kr) appData.kr = {};
 if (!appData.ritual) appData.ritual = {};
+if (!appData.weeks) appData.weeks = {};
+
+// ─── WEEK HELPERS ───
+// Quarter: 12 weeks starting from a Monday
+const QUARTER_START = new Date(2026, 3, 6); // 6 Apr 2026 = Monday
+function getWeekKey(d) {
+  const diff = Math.floor((d - QUARTER_START) / (7*24*60*60*1000));
+  return Math.max(0, Math.min(11, diff));
+}
+function getWeekMonday(weekIdx) {
+  const d = new Date(QUARTER_START);
+  d.setDate(d.getDate() + weekIdx * 7);
+  return d;
+}
+function formatWeekRange(weekIdx) {
+  const mon = getWeekMonday(weekIdx);
+  const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
+  const m = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return `Нед ${weekIdx+1}: ${mon.getDate()} ${m[mon.getMonth()]} – ${sun.getDate()} ${m[sun.getMonth()]}`;
+}
+const currentWeekIdx = getWeekKey(new Date());
+
+// Per-block current week
+let weekCursor = { i: currentWeekIdx, pm: currentWeekIdx };
 
 // ─── NAV ───
 const navBtns = document.querySelectorAll('.nav__btn');
 const sections = document.querySelectorAll('.section');
-
 navBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.section;
     navBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    sections.forEach(s => {
-      s.classList.toggle('hidden', s.id !== `section-${target}`);
-    });
+    sections.forEach(s => { s.classList.toggle('hidden', s.id !== `section-${target}`); });
+    if (target === 'summary') renderAllLogs();
   });
 });
 
-// ─── KR INPUTS ───
+// ─── WEEK BAR ───
+function renderWeekBar(block) {
+  const idx = weekCursor[block];
+  document.getElementById(`week-label-${block}`).textContent = formatWeekRange(idx);
+  const weekData = appData.weeks[idx];
+  const st = document.getElementById(`week-status-${block}`);
+  const blockKeys = block === 'i' ? ['i-kr1','i-kr2','i-kr3'] : ['pm-kr1','pm-kr2','pm-kr3','pm-kr4'];
+  const saved = weekData && blockKeys.some(k => weekData[k] !== undefined && weekData[k] !== null);
+  st.textContent = saved ? 'Сохранено' : 'Черновик';
+  st.className = 'week-bar__status ' + (saved ? 'week-bar__status--saved' : 'week-bar__status--draft');
+  // Load values into inputs
+  blockKeys.forEach(k => {
+    const input = document.querySelector(`[data-kr-input="${k}"]`);
+    if (!input) return;
+    const val = saved ? weekData[k] : (appData.kr[k] ?? null);
+    input.value = val !== null && val !== undefined ? val : '';
+  });
+  updateProgressBars();
+}
+
+['i','pm'].forEach(block => {
+  document.querySelector(`[data-week-prev="${block}"]`).addEventListener('click', () => {
+    if (weekCursor[block] > 0) { weekCursor[block]--; renderWeekBar(block); }
+  });
+  document.querySelector(`[data-week-next="${block}"]`).addEventListener('click', () => {
+    if (weekCursor[block] < 11) { weekCursor[block]++; renderWeekBar(block); }
+  });
+});
+
+// ─── KR INPUTS (save draft on type) ───
 document.querySelectorAll('[data-kr-input]').forEach(input => {
   const kr = input.dataset.krInput;
-  if (appData.kr[kr] !== undefined) input.value = appData.kr[kr];
-
   input.addEventListener('input', () => {
     appData.kr[kr] = input.value === '' ? null : Number(input.value);
     saveData(appData);
-    updateProgress();
-    updateSummary();
+    updateProgressBars();
+    updateOverall();
   });
 });
 
-function updateProgress() {
-  // Update individual KR progress bars
+// ─── SUBMIT WEEK ───
+document.querySelectorAll('[data-submit-week]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const block = btn.dataset.submitWeek;
+    const idx = weekCursor[block];
+    if (!appData.weeks[idx]) appData.weeks[idx] = {};
+    const blockKeys = block === 'i' ? ['i-kr1','i-kr2','i-kr3'] : ['pm-kr1','pm-kr2','pm-kr3','pm-kr4'];
+    blockKeys.forEach(k => {
+      const input = document.querySelector(`[data-kr-input="${k}"]`);
+      appData.weeks[idx][k] = input && input.value !== '' ? Number(input.value) : null;
+    });
+    // Auto-save ritual stats for personal block for this week
+    const ritStats = computeRitualStatsForWeek(idx);
+    if (ritStats.totalDays > 0) {
+      appData.weeks[idx]['p-kr1'] = ritStats.planPercent;
+      appData.weeks[idx]['p-kr2'] = ritStats.priorityPercent;
+      appData.weeks[idx]['p-kr3'] = ritStats.avgReactive;
+      appData.weeks[idx]['p-kr4'] = ritStats.avgEnergy;
+    }
+    appData.weeks[idx]._saved = true;
+    saveData(appData);
+    renderWeekBar(block);
+    updateOverall();
+    btn.textContent = 'Сохранено!';
+    setTimeout(() => btn.textContent = 'Отправить неделю', 1500);
+  });
+});
+
+// ─── PROGRESS BARS ───
+function updateProgressBars() {
   document.querySelectorAll('.kr-card').forEach(card => {
     const kr = card.dataset.kr;
-    const val = appData.kr[kr];
+    const input = card.querySelector('.kr-card__input');
+    const val = input ? (input.value !== '' ? Number(input.value) : null) : null;
     const fill = card.querySelector('.progress-bar__fill');
     const label = card.querySelector('.kr-card__progress-value');
-    if (val === null || val === undefined) return;
-
-    // Special handling for "less is better" KRs
+    if (val === null) { fill.style.width = '0%'; return; }
     if (kr === 'i-kr3') {
-      const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
-      fill.style.width = pct + '%';
+      fill.style.width = Math.max(0, Math.min(100, val <= 2 ? 100 : ((10-val)/10)*100)) + '%';
       label.textContent = val + '/нед';
-    } else if (kr === 'p-kr3') {
-      const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
-      fill.style.width = pct + '%';
-      label.textContent = val + '/день';
     } else {
       fill.style.width = Math.min(val, 100) + '%';
       label.textContent = val + '%';
     }
   });
-
-  // Overall progress
-  const krKeys = ['i-kr1','i-kr2','i-kr3','pm-kr1','pm-kr2','pm-kr3','pm-kr4'];
-  const targets = { 'i-kr1': 80, 'i-kr2': 90, 'i-kr3': 2, 'pm-kr1': 95, 'pm-kr2': 90, 'pm-kr3': 100, 'pm-kr4': 100 };
-  let totalProgress = 0;
-  let count = 0;
-
-  krKeys.forEach(k => {
-    const val = appData.kr[k];
-    if (val === null || val === undefined) return;
-    count++;
-    if (k === 'i-kr3') {
-      totalProgress += Math.min(100, Math.max(0, val <= targets[k] ? 100 : ((10 - val) / 10) * 100));
-    } else {
-      totalProgress += Math.min(100, (val / targets[k]) * 100);
-    }
-  });
-
-  // Add ritual-derived KRs
-  const ritualStats = computeRitualStats();
-  if (ritualStats.totalDays > 0) {
-    totalProgress += Math.min(100, (ritualStats.planPercent / 80) * 100); count++;
-    totalProgress += Math.min(100, (ritualStats.priorityPercent / 70) * 100); count++;
-    totalProgress += Math.min(100, ritualStats.avgReactive <= 3 ? 100 : ((10 - ritualStats.avgReactive) / 10) * 100); count++;
-    totalProgress += Math.min(100, (ritualStats.avgEnergy / 3.5) * 100); count++;
-  }
-
-  const overall = count > 0 ? Math.round(totalProgress / Math.max(count, 11)) : 0;
-  document.getElementById('overall-percent').textContent = overall + '%';
-  document.getElementById('overall-percent-bar').textContent = overall + '%';
-  document.getElementById('overall-fill').style.width = overall + '%';
-}
-
-function computeRitualStats() {
-  const days = Object.values(appData.ritual || {});
-  if (days.length === 0) return { totalDays: 0, planPercent: 0, priorityPercent: 0, avgReactive: 0, avgEnergy: 0 };
-  let planDays = 0, priorityDays = 0, totalReactive = 0, totalEnergy = 0, energyDays = 0;
-  days.forEach(d => {
-    if (d.plan === 'yes') planDays++;
-    if (d.priorities === 'yes') priorityDays++;
-    if (d.reactive !== undefined && d.reactive !== null) totalReactive += d.reactive;
-    if (d.energy) { totalEnergy += d.energy; energyDays++; }
-  });
-  return {
-    totalDays: days.length,
-    planPercent: Math.round((planDays / days.length) * 100),
-    priorityPercent: Math.round((priorityDays / days.length) * 100),
-    avgReactive: days.length > 0 ? +(totalReactive / days.length).toFixed(1) : 0,
-    avgEnergy: energyDays > 0 ? +(totalEnergy / energyDays).toFixed(1) : 0
-  };
-}
-
-function updateSummary() {
-  const map = {
-    'i-kr1': v => v + '%',
-    'i-kr2': v => v + '%',
-    'i-kr3': v => v + '/нед',
-    'pm-kr1': v => v + '%',
-    'pm-kr2': v => v + '%',
-    'pm-kr3': v => v + '%',
-    'pm-kr4': v => v + '%'
-  };
-  Object.keys(map).forEach(k => {
-    const el = document.querySelector(`[data-summary="${k}"]`);
-    if (el) el.textContent = appData.kr[k] !== null && appData.kr[k] !== undefined ? map[k](appData.kr[k]) : '—';
-  });
-
-  const stats = computeRitualStats();
-  const ritualMap = {
-    'p-kr1': stats.totalDays > 0 ? stats.planPercent + '%' : '—',
-    'p-kr2': stats.totalDays > 0 ? stats.priorityPercent + '%' : '—',
-    'p-kr3': stats.totalDays > 0 ? stats.avgReactive + '/день' : '—',
-    'p-kr4': stats.totalDays > 0 ? stats.avgEnergy + '/5' : '—'
-  };
-  Object.keys(ritualMap).forEach(k => {
-    const el = document.querySelector(`[data-summary="${k}"]`);
-    if (el) el.textContent = ritualMap[k];
-  });
-
-  // Update personal KR progress bars
+  // Personal KRs from ritual
+  const stats = computeRitualStatsForWeek(currentWeekIdx);
   if (stats.totalDays > 0) {
-    updatePersonalKR('p-kr1', stats.planPercent, '%');
-    updatePersonalKR('p-kr2', stats.priorityPercent, '%');
-    updatePersonalKR('p-kr3', stats.avgReactive, '/день', true);
-    updatePersonalKR('p-kr4', stats.avgEnergy, '/5', false, 5);
+    setPersonalBar('p-kr1', stats.planPercent, '%', 100);
+    setPersonalBar('p-kr2', stats.priorityPercent, '%', 100);
+    setPersonalBar('p-kr3', stats.avgReactive, '/день', 10, true);
+    setPersonalBar('p-kr4', stats.avgEnergy, '/5', 5);
   }
 }
 
-function updatePersonalKR(kr, val, suffix, inversed, max) {
+function setPersonalBar(kr, val, suffix, max, inv) {
   const card = document.querySelector(`[data-kr="${kr}"]`);
   if (!card) return;
   const fill = card.querySelector('.progress-bar__fill');
   const label = card.querySelector('.kr-card__progress-value');
-  if (inversed) {
-    const pct = Math.max(0, Math.min(100, ((10 - val) / 10) * 100));
-    fill.style.width = pct + '%';
-  } else if (max) {
-    fill.style.width = Math.min(100, (val / max) * 100) + '%';
-  } else {
-    fill.style.width = Math.min(val, 100) + '%';
-  }
+  fill.style.width = (inv ? Math.max(0,((max-val)/max)*100) : Math.min(100,(val/max)*100)) + '%';
   label.textContent = val + suffix;
+}
+
+// ─── OVERALL PROGRESS (from latest week data) ───
+function updateOverall() {
+  const allKR = ['i-kr1','i-kr2','i-kr3','p-kr1','p-kr2','p-kr3','p-kr4','pm-kr1','pm-kr2','pm-kr3','pm-kr4'];
+  const targets = {'i-kr1':80,'i-kr2':90,'i-kr3':2,'p-kr1':80,'p-kr2':70,'p-kr3':3,'p-kr4':3.5,'pm-kr1':95,'pm-kr2':90,'pm-kr3':100,'pm-kr4':100};
+  const inv = new Set(['i-kr3','p-kr3']);
+  // Find latest saved week
+  let latest = null;
+  for (let i = 11; i >= 0; i--) { if (appData.weeks[i] && appData.weeks[i]._saved) { latest = appData.weeks[i]; break; } }
+  let total = 0, count = 0;
+  allKR.forEach(k => {
+    const v = latest ? latest[k] : null;
+    if (v === null || v === undefined) return;
+    count++;
+    if (inv.has(k)) { total += v <= targets[k] ? 100 : Math.max(0, ((targets[k]*3 - v) / (targets[k]*2)) * 100); }
+    else { total += Math.min(100, (v / targets[k]) * 100); }
+  });
+  const pct = count > 0 ? Math.round(total / 11) : 0;
+  document.getElementById('overall-percent').textContent = pct + '%';
+  document.getElementById('overall-percent-bar').textContent = pct + '%';
+  document.getElementById('overall-fill').style.width = pct + '%';
+}
+
+// ─── RITUAL STATS PER WEEK ───
+function computeRitualStatsForWeek(weekIdx) {
+  const mon = getWeekMonday(weekIdx);
+  let planDays=0, prioDays=0, totalR=0, totalE=0, eDays=0, total=0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(d.getDate()+i);
+    const key = d.toISOString().slice(0,10);
+    const day = appData.ritual[key];
+    if (!day) continue;
+    total++;
+    if (day.plan === 'yes') planDays++;
+    if (day.priorities === 'yes') prioDays++;
+    if (day.reactive !== undefined) totalR += day.reactive;
+    if (day.energy) { totalE += day.energy; eDays++; }
+  }
+  if (total === 0) return { totalDays: 0, planPercent: 0, priorityPercent: 0, avgReactive: 0, avgEnergy: 0 };
+  return {
+    totalDays: total,
+    planPercent: Math.round((planDays/total)*100),
+    priorityPercent: Math.round((prioDays/total)*100),
+    avgReactive: +(totalR/total).toFixed(1),
+    avgEnergy: eDays > 0 ? +(totalE/eDays).toFixed(1) : 0
+  };
+}
+
+// ─── WEEKLY LOG TABLES ───
+function renderAllLogs() {
+  renderLog('i', ['i-kr1','i-kr2','i-kr3'], ['Задачи в срок','Синки с фиксацией','Вмешательства'], ['%','%','/нед'], [80,90,2], [false,false,true]);
+  renderLog('p', ['p-kr1','p-kr2','p-kr3','p-kr4'], ['Дни с планом','Приоритеты','Реактивные','Энергия'], ['%','%','/д','/5'], [80,70,3,3.5], [false,false,true,false]);
+  renderLog('pm', ['pm-kr1','pm-kr2','pm-kr3','pm-kr4'], ['Полная карточка','Статусы','Загрузка','IT backlog'], ['%','%','%','%'], [95,90,100,100], [false,false,false,false]);
+}
+
+function renderLog(block, keys, labels, units, targets, inversed) {
+  const el = document.getElementById(`wlog-${block}`);
+  // Collect saved weeks
+  const savedWeeks = [];
+  for (let i = 0; i < 12; i++) {
+    const w = appData.weeks[i];
+    if (w && w._saved && keys.some(k => w[k] !== undefined && w[k] !== null)) {
+      savedWeeks.push(i);
+    }
+  }
+  // For personal block, also check ritual data even if not explicitly saved
+  if (block === 'p') {
+    for (let i = 0; i < 12; i++) {
+      if (savedWeeks.includes(i)) continue;
+      const rs = computeRitualStatsForWeek(i);
+      if (rs.totalDays > 0) savedWeeks.push(i);
+    }
+    savedWeeks.sort((a,b) => a - b);
+  }
+
+  if (savedWeeks.length === 0) {
+    el.innerHTML = '<div style="padding:24px 32px;color:var(--text-muted);font-size:14px;">Пока нет данных. Заполни неделю и нажми «Отправить неделю».</div>';
+    return;
+  }
+
+  let html = '<table class="wlog-table"><thead><tr><th>KR</th><th>Цель</th>';
+  savedWeeks.forEach(w => { html += `<th>Нед ${w+1}</th>`; });
+  html += '<th>Среднее</th><th>Тренд</th></tr></thead><tbody>';
+
+  keys.forEach((k, ki) => {
+    html += `<tr><td>${labels[ki]}</td><td style="text-align:center;font-family:var(--font-mono)">${inversed[ki] ? '≤' : '≥'}${targets[ki]}${units[ki]}</td>`;
+    const vals = [];
+    savedWeeks.forEach(w => {
+      let v = null;
+      if (block === 'p') {
+        const rs = computeRitualStatsForWeek(w);
+        if (rs.totalDays > 0) v = [rs.planPercent, rs.priorityPercent, rs.avgReactive, rs.avgEnergy][ki];
+        const wd = appData.weeks[w];
+        if (wd && wd[k] !== undefined && wd[k] !== null) v = wd[k];
+      } else {
+        const wd = appData.weeks[w];
+        if (wd) v = wd[k] ?? null;
+      }
+      vals.push(v);
+      if (v === null) { html += '<td class="wlog-cell--na">—</td>'; return; }
+      const good = inversed[ki] ? v <= targets[ki] : v >= targets[ki];
+      const warn = inversed[ki] ? v <= targets[ki] * 2 : v >= targets[ki] * 0.7;
+      const cls = good ? 'wlog-cell--good' : (warn ? 'wlog-cell--warn' : 'wlog-cell--bad');
+      html += `<td class="${cls}">${v}${units[ki]}</td>`;
+    });
+    // Average
+    const validVals = vals.filter(v => v !== null);
+    const avg = validVals.length > 0 ? +(validVals.reduce((a,b)=>a+b,0)/validVals.length).toFixed(1) : null;
+    html += `<td class="wlog-avg">${avg !== null ? avg + units[ki] : '—'}</td>`;
+    // Trend (last 2 values)
+    let trend = '';
+    if (validVals.length >= 2) {
+      const last = validVals[validVals.length-1], prev = validVals[validVals.length-2];
+      const diff = last - prev;
+      if (inversed[ki]) { trend = diff < 0 ? 'trend-up' : (diff > 0 ? 'trend-down' : 'trend-flat'); }
+      else { trend = diff > 0 ? 'trend-up' : (diff < 0 ? 'trend-down' : 'trend-flat'); }
+    }
+    html += `<td class="${trend}">${avg !== null && validVals.length >= 2 ? '' : '—'}</td>`;
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
 }
 
 // ─── DAILY RITUAL ───
@@ -1558,68 +1813,37 @@ let currentDate = new Date();
 currentDate.setHours(0, 0, 0, 0);
 
 function formatDate(d) {
-  const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-  const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const days = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
   return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
-
-function dateKey(d) {
-  return d.toISOString().slice(0, 10);
-}
+function dateKey(d) { return d.toISOString().slice(0,10); }
 
 function renderRitualDate() {
   document.getElementById('ritual-date').textContent = formatDate(currentDate);
   const key = dateKey(currentDate);
   const day = appData.ritual[key] || {};
-
-  // Reset all inputs
-  document.querySelectorAll('.toggle-group .toggle-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  document.querySelectorAll('.toggle-group .toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
   document.querySelectorAll('.energy-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.ritual__num-input').forEach(i => i.value = '');
-
-  // Populate from saved data
-  if (day.plan) {
-    const grp = document.querySelector('[data-ritual="plan"]');
-    const btn = grp.querySelector(`[data-value="${day.plan}"]`);
-    if (btn) btn.classList.add(day.plan === 'yes' ? 'active-yes' : 'active-no');
-  }
-  if (day.priorities) {
-    const grp = document.querySelector('[data-ritual="priorities"]');
-    const btn = grp.querySelector(`[data-value="${day.priorities}"]`);
-    if (btn) btn.classList.add(day.priorities === 'yes' ? 'active-yes' : 'active-no');
-  }
-  if (day.reactive !== undefined && day.reactive !== null) {
-    document.querySelector('[data-ritual="reactive"]').value = day.reactive;
-  }
-  if (day.energy) {
-    const btn = document.querySelector(`.energy-btn[data-value="${day.energy}"]`);
-    if (btn) btn.classList.add('active');
-  }
-  if (day.interventions !== undefined && day.interventions !== null) {
-    document.querySelector('[data-ritual="interventions"]').value = day.interventions;
-  }
+  if (day.plan) { const b = document.querySelector(`[data-ritual="plan"] [data-value="${day.plan}"]`); if (b) b.classList.add(day.plan==='yes'?'active-yes':'active-no'); }
+  if (day.priorities) { const b = document.querySelector(`[data-ritual="priorities"] [data-value="${day.priorities}"]`); if (b) b.classList.add(day.priorities==='yes'?'active-yes':'active-no'); }
+  if (day.reactive != null) document.querySelector('[data-ritual="reactive"]').value = day.reactive;
+  if (day.energy) { const b = document.querySelector(`.energy-btn[data-value="${day.energy}"]`); if (b) b.classList.add('active'); }
+  if (day.interventions != null) document.querySelector('[data-ritual="interventions"]').value = day.interventions;
 }
 
-document.getElementById('prev-day').addEventListener('click', () => {
-  currentDate.setDate(currentDate.getDate() - 1);
-  renderRitualDate();
-});
-document.getElementById('next-day').addEventListener('click', () => {
-  currentDate.setDate(currentDate.getDate() + 1);
-  renderRitualDate();
-});
+document.getElementById('prev-day').addEventListener('click', () => { currentDate.setDate(currentDate.getDate()-1); renderRitualDate(); });
+document.getElementById('next-day').addEventListener('click', () => { currentDate.setDate(currentDate.getDate()+1); renderRitualDate(); });
 
-// Toggle buttons
 document.querySelectorAll('.toggle-group').forEach(grp => {
   grp.querySelectorAll('.toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      grp.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
-      btn.classList.add(btn.dataset.value === 'yes' ? 'active-yes' : 'active-no');
+      grp.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-yes','active-no'));
+      btn.classList.add(btn.dataset.value==='yes'?'active-yes':'active-no');
     });
   });
 });
-
-// Energy buttons
 document.querySelectorAll('.energy-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.energy-btn').forEach(b => b.classList.remove('active'));
@@ -1627,13 +1851,11 @@ document.querySelectorAll('.energy-btn').forEach(btn => {
   });
 });
 
-// Save ritual
 document.getElementById('ritual-save').addEventListener('click', () => {
   const key = dateKey(currentDate);
   const planBtn = document.querySelector('[data-ritual="plan"] .active-yes, [data-ritual="plan"] .active-no');
   const prioBtn = document.querySelector('[data-ritual="priorities"] .active-yes, [data-ritual="priorities"] .active-no');
   const energyBtn = document.querySelector('.energy-btn.active');
-
   appData.ritual[key] = {
     plan: planBtn ? planBtn.dataset.value : null,
     priorities: prioBtn ? prioBtn.dataset.value : null,
@@ -1643,10 +1865,8 @@ document.getElementById('ritual-save').addEventListener('click', () => {
   };
   saveData(appData);
   renderHistory();
-  updateProgress();
-  updateSummary();
-
-  // Brief flash feedback
+  updateProgressBars();
+  updateOverall();
   const btn = document.getElementById('ritual-save');
   btn.textContent = 'Сохранено!';
   setTimeout(() => btn.textContent = 'Сохранить день', 1500);
@@ -1658,41 +1878,36 @@ document.getElementById('ritual-clear').addEventListener('click', () => {
   saveData(appData);
   renderRitualDate();
   renderHistory();
-  updateProgress();
-  updateSummary();
+  updateProgressBars();
+  updateOverall();
 });
 
-// History grid
 function renderHistory() {
   const grid = document.getElementById('history-grid');
   grid.innerHTML = '';
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
+  const today = new Date(); today.setHours(0,0,0,0);
   for (let i = 27; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
+    const d = new Date(today); d.setDate(d.getDate()-i);
     const key = dateKey(d);
     const day = appData.ritual[key];
     const el = document.createElement('div');
     el.className = 'history__day';
     el.textContent = d.getDate();
-
     if (day) {
-      const good = (day.plan === 'yes' ? 1 : 0) + (day.priorities === 'yes' ? 1 : 0) + (day.energy >= 3 ? 1 : 0);
-      if (good >= 3) el.classList.add('history__day--filled');
-      else if (good >= 1) el.classList.add('history__day--partial');
-      else el.classList.add('history__day--bad');
+      const good = (day.plan==='yes'?1:0)+(day.priorities==='yes'?1:0)+(day.energy>=3?1:0);
+      el.classList.add(good>=3?'history__day--filled':good>=1?'history__day--partial':'history__day--bad');
     }
     grid.appendChild(el);
   }
 }
 
 // ─── INIT ───
+renderWeekBar('i');
+renderWeekBar('pm');
 renderRitualDate();
 renderHistory();
-updateProgress();
-updateSummary();
+updateProgressBars();
+updateOverall();
 </script>
 
 </body>
