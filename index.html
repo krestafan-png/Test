@@ -8,32 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-primary: #0a0c10;
-  --bg-card: #12151c;
-  --bg-card-hover: #181c26;
-  --bg-input: #1a1e28;
-  --border: #1e2330;
-  --border-active: #2a3040;
-  --text-primary: #e8eaf0;
-  --text-secondary: #8890a0;
-  --text-muted: #505868;
-  --accent-integrator: #f59e0b;
-  --accent-integrator-dim: rgba(245,158,11,0.12);
-  --accent-personal: #10b981;
-  --accent-personal-dim: rgba(16,185,129,0.12);
-  --accent-pm: #6366f1;
-  --accent-pm-dim: rgba(99,102,241,0.12);
-  --accent-danger: #ef4444;
-  --accent-success: #22c55e;
+  --bg-primary: #f5f6f8;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9fafb;
+  --bg-input: #f0f1f4;
+  --border: #e2e5eb;
+  --border-active: #cbd0d8;
+  --text-primary: #1a1d26;
+  --text-secondary: #4a5060;
+  --text-muted: #8890a0;
+  --accent-integrator: #d97706;
+  --accent-integrator-dim: rgba(217,119,6,0.1);
+  --accent-personal: #059669;
+  --accent-personal-dim: rgba(5,150,105,0.1);
+  --accent-pm: #4f46e5;
+  --accent-pm-dim: rgba(79,70,229,0.1);
+  --accent-danger: #dc2626;
+  --accent-success: #16a34a;
   --radius: 12px;
   --radius-sm: 8px;
   --radius-xs: 4px;
   --font-display: 'Manrope', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --shadow: 0 4px 24px rgba(0,0,0,0.3);
-  --shadow-glow-i: 0 0 40px rgba(245,158,11,0.06);
-  --shadow-glow-p: 0 0 40px rgba(16,185,129,0.06);
-  --shadow-glow-pm: 0 0 40px rgba(99,102,241,0.06);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-glow-i: 0 2px 20px rgba(217,119,6,0.08);
+  --shadow-glow-p: 0 2px 20px rgba(5,150,105,0.08);
+  --shadow-glow-pm: 0 2px 20px rgba(79,70,229,0.08);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -50,8 +50,8 @@ body::before {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245,158,11,0.04), transparent),
-    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(99,102,241,0.04), transparent);
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(217,119,6,0.04), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(79,70,229,0.04), transparent);
   pointer-events: none;
   z-index: 0;
 }
@@ -92,10 +92,7 @@ body::before {
   letter-spacing: -1.5px;
   line-height: 1.1;
   margin-bottom: 16px;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
 }
 .header__subtitle {
   font-size: 16px;
@@ -347,7 +344,7 @@ body::before {
   background: var(--bg-input);
   margin-top: 12px;
 }
-.kr-card__source--bitrix { color: #3bc5f6; background: rgba(59,197,246,0.1); }
+.kr-card__source--bitrix { color: #0369a1; background: rgba(3,105,161,0.08); }
 .kr-card__source--manual { color: var(--accent-personal); background: var(--accent-personal-dim); }
 
 /* ─── DAILY RITUAL ─── */
@@ -504,9 +501,9 @@ body::before {
 .btn--primary {
   background: var(--accent-success);
   border-color: var(--accent-success);
-  color: #000;
+  color: #fff;
 }
-.btn--primary:hover { background: #16a34a; }
+.btn--primary:hover { background: #15803d; }
 
 /* ─── HYPOTHESIS MAP ─── */
 .hypothesis-map {
@@ -585,10 +582,10 @@ body::before {
   color: var(--text-secondary);
   background: var(--bg-card);
 }
-.hyp-chip--subject { border-color: rgba(245,158,11,0.3); }
-.hyp-chip--pain { border-color: rgba(239,68,68,0.3); color: rgba(239,68,68,0.8); }
-.hyp-chip--hypothesis { border-color: rgba(99,102,241,0.3); color: rgba(139,142,241,0.8); }
-.hyp-chip--task { border-color: rgba(34,197,94,0.3); color: rgba(34,197,94,0.8); }
+.hyp-chip--subject { border-color: rgba(217,119,6,0.35); color: #92400e; background: rgba(217,119,6,0.06); }
+.hyp-chip--pain { border-color: rgba(220,38,38,0.35); color: #991b1b; background: rgba(220,38,38,0.06); }
+.hyp-chip--hypothesis { border-color: rgba(79,70,229,0.35); color: #3730a3; background: rgba(79,70,229,0.06); }
+.hyp-chip--task { border-color: rgba(22,163,74,0.35); color: #166534; background: rgba(22,163,74,0.06); }
 
 .hyp-chain-label {
   font-size: 10px;
